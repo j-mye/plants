@@ -1,0 +1,96 @@
+# General
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+*.tmp
+*.swp
+
+# Python bytecode / caches
+__pycache__/
+*.py[cod]
+*$py.class
+.mypy_cache/
+.pytest_cache/
+.pyre/
+.pytype/
+
+# Virtual environments
+env/
+.venv/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Distribution / build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+wheels/
+pip-wheel-metadata/
+.eggs/
+
+# Packaging / installers / PyInstaller
+*.spec
+*.manifest
+
+# Testing / coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+nosetests.xml
+junitxml/
+.hypothesis/
+
+# Django / Flask / DB
+*.sqlite3
+*.sqlite3-journal
+local_settings.py
+instance/
+.webassets-cache
+
+# Jupyter
+.ipynb_checkpoints
+
+# Sphinx
+docs/_build/
+
+# IDEs / editors
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+*.sublime-workspace
+*.sublime-project
+*.code-workspace
+
+# Environment / secret files
+.env
+.env.* 
+.env.local
+secrets.json
+credentials.json
+*.pem
+*.key
+
+# Node (if present)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS / CI
+.vagrant/
+.vagrant.d/
+tmp/
+temp/
+.cache/
+
+# Misc
+coverage/
+tags
