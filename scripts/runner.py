@@ -12,7 +12,7 @@
 #         Bad: home/ad.msoe.edu/username/
     
 # Example:
-    # python Lab11.py --data /data/cs2300/L9/fruits --batch_size 32 --epochs 10 --main_dir home/ad.msoe.edu/<username> --augment_data false --fine_tune true
+    # python runner.py --data /datasets --batch_size 32 --epochs 10 --main_dir ${WORKDIR} --augment_data false --fine_tune true
 
 from model import model, train_ds, test_ds
 
