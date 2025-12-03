@@ -54,17 +54,17 @@ WORKDIR="$(pwd)"
 ################################################################################
 # Training Configuration - Modify these to customize training
 ################################################################################
-DATA_DIR="datasets/dataset"                 # Training data directory
+DATA_DIR="datasets"                         # Training data directory
 BATCH_SIZE="32"                             # Batch size for training
 EPOCHS="2"                                  # Number of epochs
-OUTPUT_DIR="/out"                           # Directory to save models/outputs
+OUTPUT_DIR="out"                            # Directory to save models/outputs
 AUGMENT_DATA="false"                        # Use data augmentation (true/false)
 FINE_TUNE="false"                           # Use fine tuning (true/false)
 
 ################################################################################
 # Command to run inside the container with all model arguments
 ################################################################################
-command="cd ${WORKDIR}/plants && python scripts/model.py \
+command="cd ${WORKDIR}/plants && python scripts/runner.py \
     --data ${DATA_DIR} \
     --batch_size ${BATCH_SIZE} \
     --epochs ${EPOCHS} \
