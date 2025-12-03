@@ -57,7 +57,7 @@ WORKDIR="$(pwd)"
 DATA_DIR="datasets/dataset"                 # Training data directory
 BATCH_SIZE="32"                             # Batch size for training
 EPOCHS="2"                                  # Number of epochs
-OUTPUT_DIR="."                              # Directory to save models/outputs
+OUTPUT_DIR="/out"                           # Directory to save models/outputs
 AUGMENT_DATA="false"                        # Use data augmentation (true/false)
 FINE_TUNE="false"                           # Use fine tuning (true/false)
 
