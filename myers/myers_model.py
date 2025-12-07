@@ -6,7 +6,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import LSTM
 from tensorflow.keras import layers
 import os
-from plants.load_images import create_image_generator
+from load_images import create_image_generator
 
 IMG_SIZE = 224
 BATCH_SIZE = 32
