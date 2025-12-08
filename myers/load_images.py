@@ -7,8 +7,8 @@ import tensorflow as tf
 # Set up paths and parameters
 IMG_SIZE = 224  # MobileNet works well with 224x224 images
 BATCH_SIZE = 32
-train_dir = "datasets/dataset"
-test_dir = "datasets/dataset-test"
+train_dir = "../datasets/dataset"
+test_dir = "../datasets/dataset-test"
 
 # Get the number of classes from the training directory
 # Each subdirectory represents a different plant class
@@ -46,8 +46,12 @@ def load_and_preprocess_image(image_path, target_size=IMG_SIZE):
         new_height = target_size
         new_width = int(target_size * orig_width / orig_height)
     
-    # Resize image maintaining aspect ratio (using high-quality resampling)
-    img_resized = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+    try:
+        resample_filter = Image.Resampling.LANCZOS
+    except AttributeError:
+        resample_filter = getattr(Image, 'LANCZOS', Image.ANTIALIAS)
+
+    img_resized = img.resize((new_width, new_height), resample_filter)
     
     # Create white background canvas
     img_padded = Image.new('RGB', (target_size, target_size), color=(255, 255, 255))
@@ -64,8 +68,9 @@ def load_and_preprocess_image(image_path, target_size=IMG_SIZE):
 def create_image_generator(directory, batch_size, shuffle=True, augment=False):
     """
     Create a generator that loads images maintaining aspect ratio.
+    Returns a generator and the sample count.
     """
-    # Get all image files
+    # Get all image files (scan once, outside the generator)
     image_paths = []
     labels = []
     
@@ -74,30 +79,46 @@ def create_image_generator(directory, batch_size, shuffle=True, augment=False):
         if not os.path.isdir(class_dir):
             continue
         
-        # Find all image files
+        # Find all image files — avoid double-globbing by collecting in one pass
+        class_images = []
         for ext in ['*.jpg', '*.jpeg', '*.png', '*.JPG', '*.JPEG', '*.PNG']:
-            image_paths.extend(glob.glob(os.path.join(class_dir, ext)))
-            labels.extend([class_idx] * len(glob.glob(os.path.join(class_dir, ext))))
+            class_images.extend(glob.glob(os.path.join(class_dir, ext)))
+        
+        # Remove duplicates (in case .jpg and .JPG both match same file)
+        class_images = list(set(class_images))
+        image_paths.extend(class_images)
+        labels.extend([class_idx] * len(class_images))
     
     # Convert to numpy arrays
     image_paths = np.array(image_paths)
     labels = np.array(labels)
+    total_samples = len(image_paths)
     
     # Shuffle if needed
     if shuffle:
-        indices = np.random.permutation(len(image_paths))
+        indices = np.random.permutation(total_samples)
         image_paths = image_paths[indices]
         labels = labels[indices]
     
     # Create one-hot encoded labels
     labels_onehot = tf.keras.utils.to_categorical(labels, num_classes)
     
-    # Generator function
+    # Generator function: infinite loop for Keras compatibility
     def generator():
-        while True:
-            for i in range(0, len(image_paths), batch_size):
-                batch_paths = image_paths[i:i+batch_size]
-                batch_labels = labels_onehot[i:i+batch_size]
+        while True:  # Infinite loop so Keras can request as many batches as needed
+            # Shuffle again each epoch if requested
+            if shuffle:
+                epoch_indices = np.random.permutation(total_samples)
+                epoch_paths = image_paths[epoch_indices]
+                epoch_labels = labels_onehot[epoch_indices]
+            else:
+                epoch_paths = image_paths
+                epoch_labels = labels_onehot
+            
+            # Yield one full epoch per cycle
+            for i in range(0, total_samples, batch_size):
+                batch_paths = epoch_paths[i:i+batch_size]
+                batch_labels = epoch_labels[i:i+batch_size]
                 
                 # Load and preprocess images
                 batch_images = []
@@ -114,14 +135,19 @@ def create_image_generator(directory, batch_size, shuffle=True, augment=False):
                             angle = np.random.uniform(-20, 20)
                             # Convert to PIL for rotation, then back
                             img_pil = Image.fromarray((img * 255).astype(np.uint8))
-                            img_pil = img_pil.rotate(angle, fillcolor=(255, 255, 255))
+                            # Use safe rotate with fillcolor fallback
+                            try:
+                                img_pil = img_pil.rotate(angle, fillcolor=(255, 255, 255))
+                            except TypeError:
+                                # Older Pillow doesn't support fillcolor
+                                img_pil = img_pil.rotate(angle)
                             img = np.array(img_pil, dtype=np.float32) / 255.0
                     
                     batch_images.append(img)
                 
                 yield np.array(batch_images), batch_labels
     
-    return generator(), len(image_paths)
+    return generator(), total_samples
 
 # Create generators
 train_gen, train_samples = create_image_generator(
