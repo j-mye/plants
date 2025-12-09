@@ -10,14 +10,14 @@ from load_images import train_gen, test_gen, train_samples, test_samples
 
 IMG_SIZE = 224
 BATCH_SIZE = 32
+epochs = 10
+
 train_dir = "../datasets/dataset"
 test_dir = "../datasets/dataset-test"
 
 class_names = sorted([d for d in os.listdir(train_dir) 
                       if os.path.isdir(os.path.join(train_dir, d))])
 num_classes = len(class_names)
-epochs = 10
-batch_size = BATCH_SIZE
 
 # Load the pre-trained MobileNetV2 model
 base_model = MobileNetV2(
