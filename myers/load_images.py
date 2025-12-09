@@ -160,5 +160,5 @@ test_gen, test_samples = create_image_generator(
 print(f"\nTraining samples: {train_samples}")
 print(f"Test samples: {test_samples}")
 print(f"Number of classes: {num_classes}")
-print(f"\n✓ Images are resized maintaining aspect ratio (no stretching!)")
-print(f"  Longest side → {IMG_SIZE}px, padded to {IMG_SIZE}x{IMG_SIZE} square")
+print(f"\nImages are resized maintaining aspect ratio (no stretching!)")
+print(f"  Longest side {IMG_SIZE}px, padded to {IMG_SIZE}x{IMG_SIZE} square")

@@ -3,7 +3,7 @@ from tensorflow import keras
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import LSTM
+from tensorflow.python.keras.layers.recurrent import LSTM
 from tensorflow.keras import layers
 import os
 from load_images import train_gen, test_gen, train_samples, test_samples
@@ -30,9 +30,8 @@ base_model = MobileNetV2(
 base_model.trainable = False
 
 # Adding LSTM on top of the base model
-x = base_model.output
-x = GlobalAveragePooling2D()(x)
-x = layers.Lambda(lambda t: tf.expand_dims(t, axis=1))(x)
+x = base_model.output 
+x = layers.Reshape((7 * 7, 1280))(x) 
 x = LSTM(128)(x)
 x = Dense(128, activation='relu')(x)
 x = Dropout(0.5)(x)
