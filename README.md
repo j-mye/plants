@@ -1,2 +1,3 @@
-# plants
-final project for AI Tools
+# Plants: Species Classification (AI Tools final project) ✅
+
+This repository contains our final project for the AI Tools course: an image classification pipeline for identifying plant species from photographs. The project includes a baseline CNN, an improved transfer-learning model (MobileNetV2), a feature-extraction + XGBoost comparison, an LSTM experiment, and comparison runs using an external API (Gemini). Sample datasets for training and testing are included under `datasets/`.
